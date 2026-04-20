@@ -1,0 +1,4 @@
+type: folder
+name: '{orderId}'
+items:
+  - ref: ./Get an order by ID.request.yaml

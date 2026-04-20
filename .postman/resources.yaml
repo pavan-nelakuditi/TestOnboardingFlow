@@ -1,0 +1,20 @@
+workspace:
+  id: a667cf1e-5b84-4c08-959c-f2b6d605e1f7
+localResources:
+  collections:
+    - ../postman/collections/[Baseline] dummy-orders-api
+    - ../postman/collections/[Smoke] dummy-orders-api
+    - ../postman/collections/[Contract] dummy-orders-api
+  environments:
+    - ../postman/environments/prod.postman_environment.json
+    - ../postman/environments/stage.postman_environment.json
+  specs:
+    - ../specs/dummy-orders-api.openapi.yaml
+cloudResources:
+  collections:
+    ../postman/collections/[Baseline] dummy-orders-api: 50585768-501449c5-8833-490a-bb65-161cdd5f899d
+    ../postman/collections/[Smoke] dummy-orders-api: 50585768-03f0d570-2f67-40de-b0dc-9be68ea57f78
+    ../postman/collections/[Contract] dummy-orders-api: 50585768-29396b0d-54c8-4839-9fd1-bfc98a7fe9af
+  environments:
+    ../postman/environments/prod.postman_environment.json: 50585768-78b4da61-940f-4b64-be9b-64381fa135ab
+    ../postman/environments/stage.postman_environment.json: 50585768-196dd7a1-8146-4d7a-94f5-80c6f5caf656

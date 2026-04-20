@@ -1,0 +1,44 @@
+type: http
+name: Get an order by ID
+url: '{{baseUrl}}/orders/:orderId'
+method: GET
+headers:
+  - key: Accept
+    value: application/json
+pathVariables:
+  - key: orderId
+    value: string
+    description: Order identifier
+examples:
+  - response:
+      statusCode: 200
+      statusText: OK
+      body:
+        type: json
+        content: |-
+          {
+            "id": "string",
+            "customerId": "string",
+            "status": "confirmed",
+            "total": 9466.406777173306,
+            "currency": "str",
+            "createdAt": "1969-11-22T02:05:04.353Z"
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Order found
+  - response:
+      statusCode: 404
+      statusText: Not Found
+      body:
+        type: json
+        content: |-
+          {
+            "error": "string",
+            "message": "string"
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Order not found
