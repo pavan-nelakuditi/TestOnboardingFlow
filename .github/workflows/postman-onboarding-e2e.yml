@@ -36,7 +36,6 @@ on:
 permissions:
   actions: write
   contents: write
-  variables: write
 
 jobs:
   onboarding:
