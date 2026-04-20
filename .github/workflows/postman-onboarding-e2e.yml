@@ -1,0 +1,105 @@
+name: Postman Onboarding E2E
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_name:
+        description: Project name used in Postman workspace and generated assets
+        required: true
+        default: dummy-orders-api
+      domain:
+        description: Optional business domain for governance assignment
+        required: false
+      domain_code:
+        description: Optional short code used in workspace naming
+        required: false
+      spec_url:
+        description: Optional HTTPS URL override for the OpenAPI source
+        required: false
+      environments_json:
+        description: JSON array of Postman environments to create
+        required: true
+        default: '["prod","stage"]'
+      env_runtime_urls_json:
+        description: JSON map of runtime URLs keyed by environment slug
+        required: true
+        default: '{"prod":"https://dummy-orders-api.example.com","stage":"https://stage.dummy-orders-api.example.com"}'
+      repo_write_mode:
+        description: Repo mutation mode for repo-sync
+        required: true
+        default: commit-and-push
+      monitor_cron:
+        description: Optional cron for the smoke monitor. Leave blank to create it disabled.
+        required: false
+        default: ""
+
+permissions:
+  actions: write
+  contents: write
+  variables: write
+
+jobs:
+  onboarding:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate required configuration
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+          POSTMAN_ACCESS_TOKEN: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
+        run: |
+          test -n "$POSTMAN_API_KEY" || { echo "Missing required secret: POSTMAN_API_KEY"; exit 1; }
+          test -n "$POSTMAN_ACCESS_TOKEN" || { echo "Missing required secret: POSTMAN_ACCESS_TOKEN"; exit 1; }
+
+      - name: Resolve immutable spec URL
+        id: spec
+        env:
+          SPEC_URL_OVERRIDE: ${{ inputs.spec_url }}
+        run: |
+          if [ -n "$SPEC_URL_OVERRIDE" ]; then
+            echo "url=$SPEC_URL_OVERRIDE" >> "$GITHUB_OUTPUT"
+          else
+            echo "url=https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/specs/dummy-orders-api.openapi.yaml" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run Postman API onboarding
+        id: onboarding
+        uses: postman-cs/postman-api-onboarding-action@main
+        with:
+          project-name: ${{ inputs.project_name }}
+          domain: ${{ inputs.domain }}
+          domain-code: ${{ inputs.domain_code }}
+          spec-url: ${{ steps.spec.outputs.url }}
+          spec-path: specs/dummy-orders-api.openapi.yaml
+          environments-json: ${{ inputs.environments_json }}
+          env-runtime-urls-json: ${{ inputs.env_runtime_urls_json }}
+          postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
+          postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
+          postman-team-id: ${{ vars.POSTMAN_TEAM_ID }}
+          github-token: ${{ github.token }}
+          gh-fallback-token: ${{ github.token }}
+          repo-write-mode: ${{ inputs.repo_write_mode }}
+          current-ref: ${{ github.ref_name }}
+          generate-ci-workflow: true
+          ci-workflow-path: .github/workflows/postman-collection-ci.yml
+          monitor-cron: ${{ inputs.monitor_cron }}
+
+      - name: Summarize outputs
+        run: |
+          {
+            echo "## Postman API onboarding"
+            echo ""
+            echo "- Workspace ID: \`${{ steps.onboarding.outputs.workspace-id }}\`"
+            echo "- Workspace URL: ${{ steps.onboarding.outputs.workspace-url }}"
+            echo "- Spec ID: \`${{ steps.onboarding.outputs.spec-id }}\`"
+            echo "- Mock URL: ${{ steps.onboarding.outputs.mock-url }}"
+            echo "- Monitor ID: \`${{ steps.onboarding.outputs.monitor-id }}\`"
+            echo "- Commit SHA: \`${{ steps.onboarding.outputs.commit-sha }}\`"
+            echo "- Bootstrap outcome: \`${{ steps.onboarding.outputs.bootstrap-outcome }}\`"
+            echo "- Repo sync outcome: \`${{ steps.onboarding.outputs.repo-sync-outcome }}\`"
+            echo "- Repo sync summary: \`${{ steps.onboarding.outputs.repo-sync-summary-json }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
