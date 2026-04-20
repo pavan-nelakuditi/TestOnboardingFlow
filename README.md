@@ -38,12 +38,11 @@ Repo sync writes generated assets back into this repository, including:
 - `postman/specs/`
 - `.postman/resources.yaml`
 - `.postman/workflows.yaml`
-- `.github/workflows/postman-collection-ci.yml`
 
 ## Notes
 
 - The onboarding workflow is manual-only on purpose, so repo-sync pushes do not recursively trigger it.
-- The generated CI workflow path is `.github/workflows/postman-collection-ci.yml` so the action does not overwrite `.github/workflows/postman-onboarding-e2e.yml`.
+- This test workflow currently sets `generate-ci-workflow: false` so repo-sync does not try to commit a generated workflow file back into `.github/workflows/`.
 - If this repository is private, the default raw GitHub spec URL will not be fetchable anonymously. In that case, override the `spec_url` workflow input with another public HTTPS URL that serves the same spec.
 - The current composite onboarding action exposes `postman-team-id`, but not `workspace-team-id`. If your org-mode account requires a specific workspace sub-team and the run fails during workspace creation, that is the first place I would expect friction.
 - If that happens, keep the needed `POSTMAN_WORKSPACE_TEAM_ID` value handy for a direct bootstrap-action test or for a future composite update that exposes the same input.

@@ -80,10 +80,10 @@ jobs:
           postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
           postman-team-id: ${{ vars.POSTMAN_TEAM_ID }}
           github-token: ${{ github.token }}
-          gh-fallback-token: ${{ github.token }}
+          gh-fallback-token: ${{ secrets.GH_FALLBACK_TOKEN }}
           repo-write-mode: ${{ inputs.repo_write_mode }}
           current-ref: ${{ github.ref_name }}
-          generate-ci-workflow: true
+          generate-ci-workflow: false
           ci-workflow-path: .github/workflows/postman-collection-ci.yml
           monitor-cron: ${{ inputs.monitor_cron }}
 
