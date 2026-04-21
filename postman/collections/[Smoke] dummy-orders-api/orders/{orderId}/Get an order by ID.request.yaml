@@ -37,10 +37,10 @@ examples:
           {
             "id": "string",
             "customerId": "string",
-            "status": "pending",
-            "total": 2410.957287453457,
+            "status": "cancelled",
+            "total": 7402.8913492192405,
             "currency": "str",
-            "createdAt": "1957-09-24T10:52:14.177Z"
+            "createdAt": "1949-04-01T12:37:09.851Z"
           }
       headers:
         - key: Content-Type
