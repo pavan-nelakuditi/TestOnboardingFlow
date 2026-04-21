@@ -37,10 +37,10 @@ examples:
           {
             "id": "string",
             "customerId": "string",
-            "status": "shipped",
-            "total": 6891.988182823181,
+            "status": "cancelled",
+            "total": 5764.409774740707,
             "currency": "str",
-            "createdAt": "1955-03-15T08:44:28.372Z"
+            "createdAt": "1989-05-27T07:02:33.833Z"
           }
       headers:
         - key: Content-Type

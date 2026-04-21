@@ -1,13 +1,13 @@
 type: http
 name: List orders
-url: '{{baseUrl}}/orders?status=shipped'
+url: '{{baseUrl}}/orders?status=cancelled'
 method: GET
 headers:
   - key: Accept
     value: application/json
 queryParams:
   - key: status
-    value: shipped
+    value: cancelled
     description: Filter orders by lifecycle status
 scripts:
   - type: afterResponse

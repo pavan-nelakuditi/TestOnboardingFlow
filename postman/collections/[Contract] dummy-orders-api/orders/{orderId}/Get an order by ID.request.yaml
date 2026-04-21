@@ -81,9 +81,9 @@ examples:
             "id": "string",
             "customerId": "string",
             "status": "confirmed",
-            "total": 5442.664443288108,
+            "total": 1580.082024360314,
             "currency": "str",
-            "createdAt": "1988-09-12T07:40:17.852Z"
+            "createdAt": "1950-05-02T01:42:41.847Z"
           }
       headers:
         - key: Content-Type
