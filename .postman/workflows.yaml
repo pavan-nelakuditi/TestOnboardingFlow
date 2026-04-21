@@ -1,8 +1,0 @@
-workflows:
-  syncSpecToCollection:
-    - spec: ../specs/dummy-orders-api.openapi.yaml
-      collection: ../postman/collections/[Baseline] dummy-orders-api
-    - spec: ../specs/dummy-orders-api.openapi.yaml
-      collection: ../postman/collections/[Smoke] dummy-orders-api
-    - spec: ../specs/dummy-orders-api.openapi.yaml
-      collection: ../postman/collections/[Contract] dummy-orders-api

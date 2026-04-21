@@ -5,12 +5,12 @@ This repository is a small sandbox for exercising the full Postman API onboardin
 1. Bootstrap a Postman workspace from an OpenAPI 3.0 spec
 2. Generate baseline, smoke, and contract collections
 3. Run repo sync to export Postman artifacts back into the repository
-4. Validate branch behavior in the upstream actions before approving merges
+4. Validate the upstream composite onboarding flow against a clean repo and workspace
 
 ## What is in this repo
 
 - `specs/dummy-orders-api.openapi.yaml`: dummy OpenAPI 3.0 source-of-truth spec
-- `.github/workflows/postman-onboarding-e2e.yml`: manual workflow that runs upstream bootstrap and repo-sync actions directly
+- `.github/workflows/postman-onboarding-e2e.yml`: manual workflow that runs the upstream composite onboarding action
 
 ## One-time setup
 
@@ -31,10 +31,9 @@ Optional repository variable:
 
 The workflow defaults `spec-url` to the raw GitHub URL for `specs/dummy-orders-api.openapi.yaml` at the exact commit SHA being run. That keeps bootstrap and repo sync pointed at the same immutable spec revision.
 
-The current workflow intentionally avoids the composite action so it can exercise a specific upstream branch combination directly:
+The current workflow uses:
 
-- `postman-cs/postman-bootstrap-action@main`
-- `postman-cs/postman-repo-sync-action@feat/monitor-run-once-when-no-cron`
+- `postman-cs/postman-api-onboarding-action@main`
 
 Repo sync writes generated assets back into this repository, including:
 
@@ -48,5 +47,5 @@ Repo sync writes generated assets back into this repository, including:
 
 - The onboarding workflow is manual-only on purpose, so repo-sync pushes do not recursively trigger it.
 - This test workflow currently sets `generate-ci-workflow: false` so repo-sync does not try to commit a generated workflow file back into `.github/workflows/`.
-- The workflow exposes an optional `workspace_team_id` dispatch input because the direct bootstrap action supports `workspace-team-id` for org-mode teams.
+- The generated `.postman/` and `postman/` tracking assets can be deleted between runs when you want to retest from a clean repository state.
 - If this repository is private, the default raw GitHub spec URL will not be fetchable anonymously. In that case, override the `spec_url` workflow input with another public HTTPS URL that serves the same spec.
