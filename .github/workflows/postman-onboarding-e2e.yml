@@ -13,6 +13,9 @@ on:
       domain_code:
         description: Optional short code used in workspace naming
         required: false
+      workspace_team_id:
+        description: Optional Postman workspace sub-team ID for org-mode workspace creation
+        required: false
       spec_url:
         description: Optional HTTPS URL override for the OpenAPI source
         required: false
@@ -65,40 +68,57 @@ jobs:
             echo "url=https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/specs/dummy-orders-api.openapi.yaml" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Run Postman API onboarding
-        id: onboarding
-        uses: postman-cs/postman-api-onboarding-action@main
+      - name: Bootstrap Postman assets
+        id: bootstrap
+        uses: postman-cs/postman-bootstrap-action@main
         with:
           project-name: ${{ inputs.project_name }}
           domain: ${{ inputs.domain }}
           domain-code: ${{ inputs.domain_code }}
+          workspace-team-id: ${{ inputs.workspace_team_id }}
           spec-url: ${{ steps.spec.outputs.url }}
+          postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
+          postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
+      
+      - name: Sync repository and workspace
+        id: repo_sync
+        uses: postman-cs/postman-repo-sync-action@feat/monitor-run-once-when-no-cron
+        env:
+          POSTMAN_TEAM_ID: ${{ vars.POSTMAN_TEAM_ID }}
+        with:
+          project-name: ${{ inputs.project_name }}
+          workspace-id: ${{ steps.bootstrap.outputs.workspace-id }}
+          baseline-collection-id: ${{ steps.bootstrap.outputs.baseline-collection-id }}
+          smoke-collection-id: ${{ steps.bootstrap.outputs.smoke-collection-id }}
+          contract-collection-id: ${{ steps.bootstrap.outputs.contract-collection-id }}
+          spec-id: ${{ steps.bootstrap.outputs.spec-id }}
           spec-path: specs/dummy-orders-api.openapi.yaml
           environments-json: ${{ inputs.environments_json }}
           env-runtime-urls-json: ${{ inputs.env_runtime_urls_json }}
-          postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
-          postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
-          postman-team-id: ${{ vars.POSTMAN_TEAM_ID }}
-          github-token: ${{ github.token }}
-          gh-fallback-token: ${{ secrets.GH_FALLBACK_TOKEN }}
           repo-write-mode: ${{ inputs.repo_write_mode }}
           current-ref: ${{ github.ref_name }}
           generate-ci-workflow: false
           ci-workflow-path: .github/workflows/postman-collection-ci.yml
           monitor-cron: ${{ inputs.monitor_cron }}
+          postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
+          postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
+          github-token: ${{ github.token }}
+          gh-fallback-token: ${{ secrets.GH_FALLBACK_TOKEN }}
 
       - name: Summarize outputs
         run: |
           {
-            echo "## Postman API onboarding"
+            echo "## Postman onboarding branch test"
             echo ""
-            echo "- Workspace ID: \`${{ steps.onboarding.outputs.workspace-id }}\`"
-            echo "- Workspace URL: ${{ steps.onboarding.outputs.workspace-url }}"
-            echo "- Spec ID: \`${{ steps.onboarding.outputs.spec-id }}\`"
-            echo "- Mock URL: ${{ steps.onboarding.outputs.mock-url }}"
-            echo "- Monitor ID: \`${{ steps.onboarding.outputs.monitor-id }}\`"
-            echo "- Commit SHA: \`${{ steps.onboarding.outputs.commit-sha }}\`"
-            echo "- Bootstrap outcome: \`${{ steps.onboarding.outputs.bootstrap-outcome }}\`"
-            echo "- Repo sync outcome: \`${{ steps.onboarding.outputs.repo-sync-outcome }}\`"
-            echo "- Repo sync summary: \`${{ steps.onboarding.outputs.repo-sync-summary-json }}\`"
+            echo "- Bootstrap action ref: \`postman-cs/postman-bootstrap-action@main\`"
+            echo "- Repo sync action ref: \`postman-cs/postman-repo-sync-action@feat/monitor-run-once-when-no-cron\`"
+            echo "- Workspace ID: \`${{ steps.bootstrap.outputs.workspace-id }}\`"
+            echo "- Workspace URL: ${{ steps.bootstrap.outputs.workspace-url }}"
+            echo "- Spec ID: \`${{ steps.bootstrap.outputs.spec-id }}\`"
+            echo "- Mock URL: ${{ steps.repo_sync.outputs.mock-url }}"
+            echo "- Monitor ID: \`${{ steps.repo_sync.outputs.monitor-id }}\`"
+            echo "- Commit SHA: \`${{ steps.repo_sync.outputs.commit-sha }}\`"
+            echo "- Bootstrap outcome: \`${{ steps.bootstrap.outcome }}\`"
+            echo "- Repo sync outcome: \`${{ steps.repo_sync.outcome }}\`"
+            echo "- Repo sync summary: \`${{ steps.repo_sync.outputs.repo-sync-summary-json }}\`"
           } >> "$GITHUB_STEP_SUMMARY"
