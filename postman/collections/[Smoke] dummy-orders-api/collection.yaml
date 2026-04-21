@@ -1,0 +1,14 @@
+$schema: https://schema.postman.com/json/draft-2020-12/collection/v3.0.0/
+type: collection
+name: '[Smoke] dummy-orders-api'
+description: |
+  A small dummy API used to exercise the Postman API onboarding flow from bootstrap through repo sync.
+id: 4dda2867-f23e-45ac-8d64-2f7de623a174
+variables:
+  - key: baseUrl
+    value: https://dummy-orders-api.example.com
+    type: any
+items:
+  - ref: ./health/folder.yaml
+  - ref: ./orders/folder.yaml
+  - ref: ./00 - Resolve Secrets.request.yaml

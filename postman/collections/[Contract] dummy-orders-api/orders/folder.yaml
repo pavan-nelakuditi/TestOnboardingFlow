@@ -1,0 +1,6 @@
+type: folder
+name: orders
+items:
+  - ref: ./{orderId}/folder.yaml
+  - ref: ./List orders.request.yaml
+  - ref: ./Create an order.request.yaml
