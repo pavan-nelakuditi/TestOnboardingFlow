@@ -1,34 +1,11 @@
 type: http
 name: List orders
-url: '{{baseUrl}}/orders?status=confirmed'
+url: '{{baseUrl}}/orders?status=shipped'
 method: GET
 headers:
   - key: Accept
     value: application/json
 queryParams:
   - key: status
-    value: confirmed
+    value: shipped
     description: Filter orders by lifecycle status
-examples:
-  - response:
-      statusCode: 200
-      statusText: OK
-      body:
-        type: json
-        content: |-
-          {
-            "data": [
-              {
-                "id": "ord_1001",
-                "customerId": "cus_2001",
-                "status": "pending",
-                "total": 29.99,
-                "currency": "USD",
-                "createdAt": "2026-04-20T14:00:00Z"
-              }
-            ]
-          }
-      headers:
-        - key: Content-Type
-          value: application/json
-    name: Orders returned successfully

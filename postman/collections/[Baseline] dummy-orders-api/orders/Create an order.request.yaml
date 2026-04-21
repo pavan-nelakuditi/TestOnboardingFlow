@@ -23,36 +23,3 @@ body:
         }
       ]
     }
-examples:
-  - response:
-      statusCode: 201
-      statusText: Created
-      body:
-        type: json
-        content: |-
-          {
-            "id": "ord_1002",
-            "customerId": "cus_2001",
-            "status": "pending",
-            "total": 49.97,
-            "currency": "USD",
-            "createdAt": "2026-04-20T14:05:00Z"
-          }
-      headers:
-        - key: Content-Type
-          value: application/json
-    name: Order created
-  - response:
-      statusCode: 400
-      statusText: Bad Request
-      body:
-        type: json
-        content: |-
-          {
-            "error": "string",
-            "message": "string"
-          }
-      headers:
-        - key: Content-Type
-          value: application/json
-    name: Invalid order payload

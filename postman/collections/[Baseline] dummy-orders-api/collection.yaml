@@ -7,7 +7,6 @@ id: 501449c5-8833-490a-bb65-161cdd5f899d
 variables:
   - key: baseUrl
     value: https://dummy-orders-api.example.com
-    type: any
 items:
   - ref: ./health/folder.yaml
   - ref: ./orders/folder.yaml
